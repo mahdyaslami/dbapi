@@ -3,26 +3,38 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use App\Middleware\JsonBodyParserMiddleware;
 
 require __DIR__ . './../vendor/autoload.php';
 require __DIR__ . './../vendor/catfan/medoo/src/medoo.php';
+
+/**
+ * Database configuration.
+ */
 require __DIR__ . './db.php';
 
+/**
+ * Create app.
+ */
 $app = AppFactory::create();
+
+/**
+ * If api site is in the subdirectory we have to set subdirectories as base
+ * path here.
+ */
 $app->setBasePath('/dbapi');
-$app->add(function (Request $request, RequestHandler $handler) {
-    $contentType = $request->getHeaderLine('Content-Type');
 
-    if (strstr($contentType, 'application/json')) {
-        $contents = json_decode(file_get_contents('php://input'), true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $request = $request->withParsedBody($contents);
-        }
-    }
+/**
+ * Add middleware for manage body when content type is 'application/json'.
+ */
+$app->add(new JsonBodyParserMiddleware());
 
-    return $handler->handle($request);
-});
-
+/**
+ * Add routs.
+ */
 require __DIR__ . './routs.php';
 
+/**
+ * run.
+ */
 $app->run();

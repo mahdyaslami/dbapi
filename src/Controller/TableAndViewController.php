@@ -8,7 +8,8 @@ use Slim\Routing\RouteCollectorProxy;
 
 class TableAndViewController 
 {
-    public function getAll(Request $request, Response $response, $args) {
+    public function getAll(Request $request, Response $response, $args) 
+    {
         global $database;
         
         $data = $database->select($args['table'], '*');
@@ -18,7 +19,8 @@ class TableAndViewController
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function getById (Request $request, Response $response, $args) {
+    public function getById (Request $request, Response $response, $args) 
+    {
         global $database;
         
         $data = $database->select($args['table'], '*', [
@@ -29,19 +31,38 @@ class TableAndViewController
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function insert(Request $request, Response $response, $args) {
+    public function insert(Request $request, Response $response, $args) 
+    {
         global $database;
-        
+        $result = null;
+
         $parsedBody = $request->getParsedBody();
         if (isset($parsedBody['id'])) {
-            // TODO در صورتی که این آیدی موجود بود بروزرسانی کند و سطر جدیدی اضافه نکند
-        } 
-    
-        $database->insert($args['table'], $parsedBody);
+            $id = $parsedBody['id'];
+            unset($parsedBody['id']);
+
+            $data = $database->update($args['table'], $parsedBody, [
+                'id' => $id
+            ]);
+
+            if ($data->rowCount() == 1) {
+                $result = json_encode(['id' => $id]);
+            } else {
+                // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
+            }
+        } else {
+            $data = $database->insert($args['table'], $parsedBody);
             
-        $id = $database->id();
+            if ($data->rowCount() == 1) {
+                // 201 - Created
+                $response->withStatus(201);
+                $result = json_encode(['id' => $database->id()]);
+            } else {
+                // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
+            }
+        }
     
-        $response->getBody()->write(json_encode(['id' => $id]));
+        $response->getBody()->write($result);
         return $response
             ->withHeader('Content-Type', 'application/json');
     }

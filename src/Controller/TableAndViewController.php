@@ -11,10 +11,21 @@ class TableAndViewController
     public function getAll(Request $request, Response $response, $args) 
     {
         global $database;
-        
+        $result = null;
+
         $data = $database->select($args['table'], '*');
 
-        $response->getBody()->write(json_encode($data));
+        if ($data === false){
+            // 404 - Not found
+            $response = $response->withStatus(404);
+            $result = [
+                'message' => 'Table is not exists.'
+            ];
+        } else {
+            $result = $data;
+        }
+
+        $response->getBody()->write(json_encode($result));
         return $response
             ->withHeader('Content-Type', 'application/json');
     }
@@ -22,11 +33,23 @@ class TableAndViewController
     public function getById (Request $request, Response $response, $args) 
     {
         global $database;
-        
+        $result = null;
+
         $data = $database->select($args['table'], '*', [
             'id' => $args['id']
         ]);
-        $response->getBody()->write(json_encode($data));
+
+        if ($data === false){
+            // 404 - Not found
+            $response = $response->withStatus(404);
+            $result = [
+                'message' => 'Table is not exists.'
+            ];
+        } else {
+            $result = $data;
+        }
+
+        $response->getBody()->write(json_encode($result));
         return $response
             ->withHeader('Content-Type', 'application/json');
     }
@@ -55,7 +78,7 @@ class TableAndViewController
             
             if ($data->rowCount() == 1) {
                 // 201 - Created
-                $response->withStatus(201);
+                $response = $response->withStatus(201);
                 $result = json_encode(['id' => $database->id()]);
             } else {
                 // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد

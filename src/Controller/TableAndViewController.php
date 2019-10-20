@@ -18,9 +18,8 @@ class TableAndViewController
         if ($data === false){
             // 404 - Not found
             $response = $response->withStatus(404);
-            $result = [
-                'message' => 'Table is not exists.'
-            ];
+            
+            $result = $this->getError();
         } else {
             $result = $data;
         }
@@ -42,9 +41,8 @@ class TableAndViewController
         if ($data === false){
             // 404 - Not found
             $response = $response->withStatus(404);
-            $result = [
-                'message' => 'Table is not exists.'
-            ];
+            
+            $result = $this->getError();
         } else {
             $result = $data;
         }
@@ -58,35 +56,52 @@ class TableAndViewController
     {
         global $database;
         $result = null;
-
+        $id = null;
+        $isUpdate = false;
+        
         $parsedBody = $request->getParsedBody();
         if (isset($parsedBody['id'])) {
             $id = $parsedBody['id'];
             unset($parsedBody['id']);
-
+        
             $data = $database->update($args['table'], $parsedBody, [
                 'id' => $id
             ]);
-
-            if ($data->rowCount() == 1) {
-                $result = json_encode(['id' => $id]);
-            } else {
-                // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
-            }
+            
+            $isUpdate = true;
         } else {
             $data = $database->insert($args['table'], $parsedBody);
-            
-            if ($data->rowCount() == 1) {
-                // 201 - Created
-                $response = $response->withStatus(201);
-                $result = json_encode(['id' => $database->id()]);
-            } else {
-                // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
-            }
         }
-    
-        $response->getBody()->write($result);
+        
+        if ($data->rowCount() == 1 && $isUpdate == true) {
+            $result = ['id' => $id];
+        } elseif ($data->rowCount() == 1 && $isUpdate == false) {
+            // 201 - Created
+            $response = $response->withStatus(201);
+            $result = ['id' => $database->id()];
+        } else {
+            $result = $this->getError();
+            // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
+        }
+        
+        $response->getBody()->write(json_encode($result));
         return $response
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    private function getError()
+    {
+        global $database;
+        
+        $error = $database->error();
+        if ($error != null && $error[0] != '00000') {
+            return [
+                'sqlStateErrorCode' => $error[0],
+                'driverSpecificErrorCode' => $error[1],
+                'message' => $error[2]
+            ];
+        } else {
+            return [];
+        }
     }
 }

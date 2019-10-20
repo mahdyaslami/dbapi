@@ -6,7 +6,6 @@ use Slim\Factory\AppFactory;
 use App\Middleware\JsonBodyParserMiddleware;
 
 require __DIR__ . './../vendor/autoload.php';
-require __DIR__ . './../vendor/catfan/medoo/src/medoo.php';
 
 /**
  * Database configuration.

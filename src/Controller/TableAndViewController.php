@@ -16,7 +16,11 @@ class TableAndViewController
         $data = $database->select($args['table'], '*');
 
         if ($data === false) {
-            // 404 - Not found
+            /**
+             * Change response status to 404 because an error has thrown
+             * if the table was empty $data isn't false and api will return
+             * emtpy array.
+             */
             $response = $response->withStatus(404);
 
             $result = $this->getError();
@@ -39,7 +43,11 @@ class TableAndViewController
         ]);
 
         if ($data === false) {
-            // 404 - Not found
+            /**
+             * Change response status to 404 because an error has thrown
+             * if the table was empty $data isn't false and api will return
+             * emtpy array.
+             */
             $response = $response->withStatus(404);
 
             $result = $this->getError();
@@ -76,12 +84,23 @@ class TableAndViewController
         if ($data->rowCount() == 1 && $isUpdate == true) {
             $result = ['id' => $id];
         } elseif ($data->rowCount() == 1 && $isUpdate == false) {
-            // 201 - Created
+            /**
+             * New row is created so response status have to change to
+             * (201 - Created) status.
+             */
             $response = $response->withStatus(201);
             $result = ['id' => $database->id()];
-        } else {
+        } else if ($data == false) {
+            /**
+             * Change response status to 404 because an error has thrown
+             * if the table was empty $data isn't false and api will return
+             * emtpy array.
+             */
+            $response = $response->withStatus(404);
+
             $result = $this->getError();
-            // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
+        } else {
+            $result = $data;
         }
 
         $response->getBody()->write(json_encode($result));
@@ -104,8 +123,14 @@ class TableAndViewController
         if ($data->rowCount() == 1) {
             $result = ['id' => $id];
         } else {
+            /**
+             * Change response status to 404 because an error has thrown
+             * if the table was empty $data isn't false and api will return
+             * emtpy array.
+             */
+            $response = $response->withStatus(404);
+
             $result = $this->getError();
-            // TODO در صورتی که کد خطا لازم دارد باید اینجا هم برگردد
         }
 
         $response->getBody()->write(json_encode($result));

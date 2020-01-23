@@ -132,8 +132,10 @@ class TableAndViewController
             $response = $response->withStatus(201);
             $result = ['id' => $database->id()];
         } elseif ($affectedRows === 0) {
-            $response = $response->withStatus(204);
-            $result = [];
+            $response = $response->withStatus(200);
+            $result = [
+                'affectedRows' => $affectedRows
+            ];
         } elseif ($data === false) {
             $response = $response->withStatus(200);
             $result = false;
@@ -179,9 +181,58 @@ class TableAndViewController
                 'id' => $id,
                 'affectedRows' => $affectedRows
             ];
-        } elseif ($affectedRows == 0) {
+        } elseif ($affectedRows === 0) {
+            $response = $response->withStatus(200);
+            $result = [
+                'affectedRows' => $affectedRows
+            ];
+        } elseif ($data === false) {
+            $response = $response->withStatus(200);
+            $result = false;
+        } elseif (empty($data)) {
             $response = $response->withStatus(204);
             $result = [];
+        } else {
+            $result = $data;
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function delete(Request $request, Response $response, $args)
+    {
+        global $database;
+        $result = null;
+        $error = false;
+        $id = $args['id'];
+
+        $data = $database->delete($args['table'], [
+            'id' => $id
+        ]);
+
+        $error = $this->getError();
+
+        $affectedRows = $data->rowCount();
+        if ($error !== false) {
+            /**
+             * Change response status to 400 because an error has thrown
+             * if the table was empty $data isn't false and api will return
+             * emtpy array.
+             */
+            $response = $response->withStatus(400);
+
+            $result = $error;
+        } elseif ($affectedRows > 0) {
+            $result = [
+                'affectedRows' => $affectedRows
+            ];
+        } elseif ($affectedRows === 0) {
+            $response = $response->withStatus(200);
+            $result = [
+                'affectedRows' => $affectedRows
+            ];
         } elseif ($data === false) {
             $response = $response->withStatus(200);
             $result = false;

@@ -11,19 +11,28 @@ class TableAndViewController
     public function getAll(Request $request, Response $response, $args)
     {
         global $database;
-        $result = null;
+        $result = [];
+        $error = false;
 
         $data = $database->select($args['table'], '*');
 
-        if ($data === false) {
+        $error = $result = $this->getError();
+
+        if ($error !== false) {
             /**
-             * Change response status to 404 because an error has thrown
+             * Change response status to 400 because an error has thrown
              * if the table was empty $data isn't false and api will return
              * emtpy array.
              */
-            $response = $response->withStatus(404);
+            $response = $response->withStatus(400);
 
-            $result = $this->getError();
+            $result = $error;
+        } elseif ($data === false) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } elseif (empty($data)) {
+            $response = $response->withStatus(204);
+            $result = [];
         } else {
             $result = $data;
         }
@@ -37,20 +46,29 @@ class TableAndViewController
     {
         global $database;
         $result = null;
+        $error = false;
 
         $data = $database->select($args['table'], '*', [
             'id' => $args['id']
         ]);
 
-        if ($data === false) {
+        $error = $this->getError();
+
+        if ($error !== false) {
             /**
-             * Change response status to 404 because an error has thrown
+             * Change response status to 400 because an error has thrown
              * if the table was empty $data isn't false and api will return
              * emtpy array.
              */
-            $response = $response->withStatus(404);
+            $response = $response->withStatus(400);
 
-            $result = $this->getError();
+            $result = $error;
+        } elseif ($data === false) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } elseif (empty($data)) {
+            $response = $response->withStatus(204);
+            $result = [];
         } else {
             $result = $data;
         }
@@ -64,6 +82,7 @@ class TableAndViewController
     {
         global $database;
         $result = null;
+        $error = false;
         $id = null;
         $isUpdate = false;
 
@@ -76,29 +95,51 @@ class TableAndViewController
                 'id' => $id
             ]);
 
+            $error = $this->getError();
+
             $isUpdate = true;
         } else {
             $data = $database->insert($args['table'], $parsedBody);
+
+            $error = $this->getError();
         }
 
-        if ($data->rowCount() == 1 && $isUpdate == true) {
-            $result = ['id' => $id];
-        } elseif ($data->rowCount() == 1 && $isUpdate == false) {
+        $affectedRows = $data->rowCount();
+        if ($error !== false) {
+            /**
+             * Change response status to 400 because an error has thrown
+             * if the table was empty $data isn't false and api will return
+             * emtpy array.
+             */
+            $response = $response->withStatus(400);
+
+            $result = $error;
+        } elseif ($affectedRows > 0 && $isUpdate == true) {
+            /**
+             * If PUT request has updated existing rows so we will
+             * add affected rows to the response for making difference
+             * between update and insert response.
+             */
+            $result = [
+                'id' => $id,
+                'affectedRows' => $affectedRows
+            ];
+        } elseif ($affectedRows > 0 && $isUpdate == false) {
             /**
              * New row is created so response status have to change to
              * (201 - Created) status.
              */
             $response = $response->withStatus(201);
             $result = ['id' => $database->id()];
-        } else if ($data == false) {
-            /**
-             * Change response status to 404 because an error has thrown
-             * if the table was empty $data isn't false and api will return
-             * emtpy array.
-             */
-            $response = $response->withStatus(404);
-
-            $result = $this->getError();
+        } elseif ($affectedRows === 0) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } elseif ($data === false) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } elseif (empty($data)) {
+            $response = $response->withStatus(204);
+            $result = [];
         } else {
             $result = $data;
         }
@@ -112,6 +153,7 @@ class TableAndViewController
     {
         global $database;
         $result = null;
+        $error = false;
         $id = $args['id'];
 
         $parsedBody = $request->getParsedBody();
@@ -120,17 +162,34 @@ class TableAndViewController
             'id' => $id
         ]);
 
-        if ($data->rowCount() == 1) {
-            $result = ['id' => $id];
-        } else {
+        $error = $this->getError();
+
+        $affectedRows = $data->rowCount();
+        if ($error !== false) {
             /**
-             * Change response status to 404 because an error has thrown
+             * Change response status to 400 because an error has thrown
              * if the table was empty $data isn't false and api will return
              * emtpy array.
              */
-            $response = $response->withStatus(404);
+            $response = $response->withStatus(400);
 
-            $result = $this->getError();
+            $result = $error;
+        } elseif ($affectedRows > 0) {
+            $result = [
+                'id' => $id,
+                'affectedRows' => $affectedRows
+            ];
+        } elseif ($affectedRows == 0) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } elseif ($data === false) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } elseif (empty($data)) {
+            $response = $response->withStatus(204);
+            $result = [];
+        } else {
+            $result = $data;
         }
 
         $response->getBody()->write(json_encode($result));
@@ -150,7 +209,7 @@ class TableAndViewController
                 'message' => $error[2]
             ];
         } else {
-            return [];
+            return false;
         }
     }
 }

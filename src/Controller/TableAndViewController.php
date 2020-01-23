@@ -16,7 +16,7 @@ class TableAndViewController
 
         $data = $database->select($args['table'], '*');
 
-        $error = $result = $this->getError();
+        $error = $this->getError();
 
         if ($error !== false) {
             /**

@@ -28,8 +28,8 @@ class TableAndViewController
 
             $result = $error;
         } elseif ($data === false) {
-            $response = $response->withStatus(204);
-            $result = [];
+            $response = $response->withStatus(200);
+            $result = false;
         } elseif (empty($data)) {
             $response = $response->withStatus(204);
             $result = [];
@@ -64,8 +64,8 @@ class TableAndViewController
 
             $result = $error;
         } elseif ($data === false) {
-            $response = $response->withStatus(204);
-            $result = [];
+            $response = $response->withStatus(200);
+            $result = false;
         } elseif (empty($data)) {
             $response = $response->withStatus(204);
             $result = [];
@@ -135,8 +135,8 @@ class TableAndViewController
             $response = $response->withStatus(204);
             $result = [];
         } elseif ($data === false) {
-            $response = $response->withStatus(204);
-            $result = [];
+            $response = $response->withStatus(200);
+            $result = false;
         } elseif (empty($data)) {
             $response = $response->withStatus(204);
             $result = [];
@@ -183,8 +183,8 @@ class TableAndViewController
             $response = $response->withStatus(204);
             $result = [];
         } elseif ($data === false) {
-            $response = $response->withStatus(204);
-            $result = [];
+            $response = $response->withStatus(200);
+            $result = false;
         } elseif (empty($data)) {
             $response = $response->withStatus(204);
             $result = [];

@@ -23,7 +23,8 @@ $database = new Medoo([
 	// [optional] driver_option for connection, read more from http://www.php.net/manual/en/pdo.setattribute.php
 	'option' => [
 		PDO::ATTR_CASE => PDO::CASE_NATURAL,
-		PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION
+		PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION,
+		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 	],
  
 	// [optional] Medoo will execute those commands after connected to the database for initialization

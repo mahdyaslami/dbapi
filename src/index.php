@@ -1,16 +1,16 @@
 <?php
+require __DIR__ . '/../vendor/autoload.php';
+
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use App\Middleware\JsonBodyParserMiddleware;
 
-require __DIR__ . './../vendor/autoload.php';
-
 /**
  * Database configuration.
  */
-require __DIR__ . './db.php';
+require __DIR__ . '/db.php';
 
 /**
  * |---------------------------------------------------------------------------
@@ -63,7 +63,7 @@ $errorHandler->forceContentType('application/json');
 /**
  * Add routs.
  */
-require __DIR__ . './routs.php';
+require __DIR__ . '/routs.php';
 
 /**
  * run.

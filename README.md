@@ -9,9 +9,10 @@ Prerequisites
 Error Handling
 --------------
 
-1. **STATUS** code of response have to change with content. if we have error
-   use error codes like 404 or 302 and if it's not error use 201 and other
-   codes.
+1. **STATUS** code of response have to change with content. [See error codes](doc/http-errors.md)
 
-2. **Error Message** have to send if there is or not. (every correct response
-   must have content.)
+2. **Error Message** have to send if there is or not. 
+
+    Empty response mean the result is emtpy array of results.
+
+    if response code is 204 it mean database has returned false value.

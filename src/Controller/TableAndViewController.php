@@ -28,10 +28,10 @@ class TableAndViewController
 
             $result = $error;
         } elseif ($data === false) {
-            $response = $response->withStatus(200);
+            $response = $response->withStatus(204);
             $result = false;
         } elseif (empty($data)) {
-            $response = $response->withStatus(204);
+            $response = $response->withStatus(200);
             $result = [];
         } else {
             $result = $data;
@@ -64,10 +64,10 @@ class TableAndViewController
 
             $result = $error;
         } elseif ($data === false) {
-            $response = $response->withStatus(200);
+            $response = $response->withStatus(204);
             $result = false;
         } elseif (empty($data)) {
-            $response = $response->withStatus(204);
+            $response = $response->withStatus(200);
             $result = [];
         } else {
             $result = $data;
@@ -137,10 +137,10 @@ class TableAndViewController
                 'affectedRows' => $affectedRows
             ];
         } elseif ($data === false) {
-            $response = $response->withStatus(200);
+            $response = $response->withStatus(204);
             $result = false;
         } elseif (empty($data)) {
-            $response = $response->withStatus(204);
+            $response = $response->withStatus(200);
             $result = [];
         } else {
             $result = $data;
@@ -187,10 +187,10 @@ class TableAndViewController
                 'affectedRows' => $affectedRows
             ];
         } elseif ($data === false) {
-            $response = $response->withStatus(200);
+            $response = $response->withStatus(204);
             $result = false;
         } elseif (empty($data)) {
-            $response = $response->withStatus(204);
+            $response = $response->withStatus(200);
             $result = [];
         } else {
             $result = $data;
@@ -234,10 +234,10 @@ class TableAndViewController
                 'affectedRows' => $affectedRows
             ];
         } elseif ($data === false) {
-            $response = $response->withStatus(200);
+            $response = $response->withStatus(204);
             $result = false;
         } elseif (empty($data)) {
-            $response = $response->withStatus(204);
+            $response = $response->withStatus(200);
             $result = [];
         } else {
             $result = $data;

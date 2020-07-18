@@ -58,7 +58,9 @@ $routes = [
         ],
         'callbacks' => [
             function ($request, $args) {
+                global $db;
                 $table = $args['table'];
+                
                 require_once(__DIR__ . '/../src/get-table.php');
             }
         ]

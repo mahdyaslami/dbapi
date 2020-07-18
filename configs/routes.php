@@ -1,4 +1,5 @@
 <?php
+
 /**
  * An Route Item:
  *  [
@@ -46,110 +47,20 @@
  *              Contain route items with current route group prefix.
  *  ]
  */
+require_once(__DIR__ . '/../src/func-utility.php');
 
 $routes = [
     [
         'method' => 'GET',
-        'path' => '/users',
-        'callbacks' => [
-            function () {
-                echo 'Hello';
-            },
-            function ($request) {
-                echo ' World! ' . $request->uri;
-            }
-        ]
-    ],
-    [
-        'method' => 'POST',
-        'path' => '/users',
-        'callbacks' => []
-    ],
-    [
-        'method' => 'GET',
-        'path' => '/users/{id}',
+        'path' => '/{table}',
         'params' => [
-            'id' => '\d+'
+            'table' => '\w+'
         ],
         'callbacks' => [
-            function () {
-                echo 'Hello';
-            },
             function ($request, $args) {
-                echo ' World! ' . $args['id'];
+                $table = $args['table'];
+                require_once(__DIR__ . '/../src/get-table.php');
             }
-        ]
-    ],
-    [
-        'method' => 'POST',
-        'path' => '/users/{id}',
-        'params' => [
-            'id' => '\d+'
-        ],
-        'callbacks' => []
-    ],
-    [
-        'method' => 'POST',
-        'path' => '/{lang}/users/{id}',
-        'params' => [
-            'lang' => 'en|fa',
-            'id' => '\d+'
-        ],
-        'callbacks' => []
-    ],
-    [
-        'path' => '/colors',
-        'beforeCallbacks' => [
-            function () {
-                echo 'before ';
-            }
-        ],
-        'afterCallbacks' => [
-            function ($request) {
-                echo ' after';
-            }
-        ],
-        'children' => [
-            [
-                'method' => 'GET',
-                'path' => '',
-                'callbacks' => [
-                    function () {
-                        echo 'Hello';
-                    },
-                    function ($request) {
-                        echo ' World! ' . $request->uri;
-                    }
-                ]
-            ],
-            [
-                'method' => 'POST',
-                'path' => '',
-                'callbacks' => []
-            ],
-            [
-                'method' => 'GET',
-                'path' => '/{id}',
-                'params' => [
-                    'id' => '\d+'
-                ],
-                'callbacks' => [
-                    function () {
-                        echo 'Hello';
-                    },
-                    function ($request, $args) {
-                        echo ' World! ' . $args['id'];
-                    }
-                ]
-            ],
-            [
-                'method' => 'POST',
-                'path' => '/{id}',
-                'params' => [
-                    'id' => '\d+'
-                ],
-                'callbacks' => []
-            ]
         ]
     ]
 ];

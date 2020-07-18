@@ -1,18 +1,31 @@
-README
-======
+# Super Simple Framework (SSFW)
 
-Prerequisites
--------------
+This is very very very simple framework that let us to implement our api on 
+optional route without file url approach with simple php.
 
-1. The **PRIMARY KEY** to all the tables have to be the name of the 'id'.
+## Nameing Conventions
 
-Error Handling
---------------
+### Files
 
-1. **STATUS** code of response have to change with content. [See error codes](doc/http-errors.md)
+- **includes folder**: Contain global functions, variables and classes.
+    - class files: `class-name-of-class.php`
+    - func files: `func-name-of-module.php`
 
-2. **Error Message** have to send if there is or not. 
+### Class
 
-    Empty response mean the result is emtpy array of results.
+- **class name**: Pascal Case
+- **method name**: camel Case
+- **property name**: camel Case
+- **namespaces**: Pascal Case
+- [Use symfony coding standard for other convenction for classes](https://symfony.com/doc/current/contributing/code/standards.html#symfony-coding-standards-in-detail)
 
-    if response code is 204 it mean database has returned false value.
+### Global functions and variables
+
+- **function name**: camel Case
+- **variable name**: camel Case
+
+
+<hr>
+
+- Auther: [Mahdi Aslami Khavari](www.mahdiaslamikhavari.ir)
+- Mail: mahdyaslami@gmail.com

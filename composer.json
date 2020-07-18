@@ -11,5 +11,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "catfan/medoo": "dev-master"
     }
 }
